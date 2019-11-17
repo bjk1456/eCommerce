@@ -1,7 +1,10 @@
 package com.example.demo.controllers;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
+import com.example.demo.security.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +20,7 @@ import com.example.demo.model.persistence.User;
 import com.example.demo.model.persistence.repositories.CartRepository;
 import com.example.demo.model.persistence.repositories.UserRepository;
 import com.example.demo.model.requests.CreateUserRequest;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @RestController
 @RequestMapping("/api/user")
@@ -27,6 +31,12 @@ public class UserController {
 	
 	@Autowired
 	private CartRepository cartRepository;
+
+	@Autowired
+	private JwtTokenProvider jwtTokenProvider;
+
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 
 	@GetMapping("/id/{id}")
 	public ResponseEntity<User> findById(@PathVariable Long id) {
@@ -40,14 +50,20 @@ public class UserController {
 	}
 	
 	@PostMapping("/create")
-	public ResponseEntity<User> createUser(@RequestBody CreateUserRequest createUserRequest) {
+	public String createUser(@RequestBody CreateUserRequest createUserRequest) {
 		User user = new User();
 		user.setUsername(createUserRequest.getUsername());
+		user.setPassword("DontHaveACow");
 		Cart cart = new Cart();
 		cartRepository.save(cart);
 		user.setCart(cart);
 		userRepository.save(user);
-		return ResponseEntity.ok(user);
+		List<String> roles = new ArrayList<String>();
+		roles.add("ROLE_CLIENT");
+		return jwtTokenProvider.createToken(user.getUsername(),roles);
+		//return ResponseEntity.ok(user);
 	}
+
+
 	
 }

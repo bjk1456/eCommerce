@@ -35,6 +35,7 @@ public class CartController {
 	@PostMapping("/addToCart")
 	public ResponseEntity<Cart> addTocart(@RequestBody ModifyCartRequest request) {
 		User user = userRepository.findByUsername(request.getUsername());
+		//System.out.println("The user is ")
 		if(user == null) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
 		}
