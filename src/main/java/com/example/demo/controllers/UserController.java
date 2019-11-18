@@ -20,23 +20,24 @@ import com.example.demo.model.persistence.User;
 import com.example.demo.model.persistence.repositories.CartRepository;
 import com.example.demo.model.persistence.repositories.UserRepository;
 import com.example.demo.model.requests.CreateUserRequest;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @RestController
 @RequestMapping("/api/user")
 public class UserController {
-	
-	@Autowired
+
 	private UserRepository userRepository;
-	
-	@Autowired
+
 	private CartRepository cartRepository;
 
-	@Autowired
 	private JwtTokenProvider jwtTokenProvider;
 
 	@Autowired
-	private PasswordEncoder passwordEncoder;
+	public UserController(UserRepository userRepository, CartRepository cartRepository, JwtTokenProvider jwtTokenProvider) {
+		this.userRepository = userRepository;
+		this.cartRepository = cartRepository;
+		this.jwtTokenProvider = jwtTokenProvider;
+	}
 
 	@GetMapping("/id/{id}")
 	public ResponseEntity<User> findById(@PathVariable Long id) {
@@ -53,7 +54,10 @@ public class UserController {
 	public String createUser(@RequestBody CreateUserRequest createUserRequest) {
 		User user = new User();
 		user.setUsername(createUserRequest.getUsername());
-		user.setPassword("DontHaveACow");
+		System.out.println("The username is " + createUserRequest.getUsername());
+		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+		String hashedPassword = passwordEncoder.encode(createUserRequest.getPassword());
+		user.setPassword(hashedPassword);
 		Cart cart = new Cart();
 		cartRepository.save(cart);
 		user.setCart(cart);
