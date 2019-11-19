@@ -52,6 +52,7 @@ public class UserControllerTest {
 
         String response = userController.createUser(req);
         assertNotNull(response);
+        assertEquals(response,"eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJCYXJ0IiwiYXV0aCI6W3siYXV0aG9yaXR5IjoiUk9MRV9DTElFTlQifV0sImlhdCI6MTU3NDEwMzU2MSwiZXhwIjoxNTc0MTA3MTYxfQ.9BE-iYKN2Rufpvf6xd9JD1KXdzpA-hRodg22ByA-DK8");
     }
 
     @Test
