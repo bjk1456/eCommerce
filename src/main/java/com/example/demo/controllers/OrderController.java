@@ -20,15 +20,17 @@ import com.example.demo.model.persistence.repositories.UserRepository;
 @RestController
 @RequestMapping("/api/order")
 public class OrderController {
-	
-	
-	@Autowired
+
 	private UserRepository userRepository;
-	
-	@Autowired
+
 	private OrderRepository orderRepository;
-	
-	
+
+	@Autowired
+	public OrderController(UserRepository userRepository, OrderRepository orderRepository){
+		this.userRepository = userRepository;
+		this.orderRepository = orderRepository;
+	}
+
 	@PostMapping("/submit/{username}")
 	public ResponseEntity<UserOrder> submit(@PathVariable String username) {
 		User user = userRepository.findByUsername(username);

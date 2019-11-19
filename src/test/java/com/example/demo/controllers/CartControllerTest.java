@@ -17,7 +17,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -50,6 +50,7 @@ public class CartControllerTest {
         User foundU = userRepository.findByUsername("Bill");
         req.setItemId(1);
         req.setQuantity(2);
+        cartController.addTocart(req);
 
         Cart savedCart = new Cart();
         savedCart.setId(1l);
@@ -80,6 +81,7 @@ public class CartControllerTest {
         User foundU = userRepository.findByUsername("Bill");
         req.setItemId(1);
         req.setQuantity(2);
+        cartController.addTocart(req);
 
         Cart savedCart = new Cart();
         savedCart.setId(1l);
@@ -89,6 +91,7 @@ public class CartControllerTest {
         Item hammer = new Item();
         hammer.setId(req.getItemId());
         hammer.setName("Hammer");
+        hammer.setPrice(BigDecimal.valueOf(23.222));
         itemL.add(hammer);
         savedCart.setItems(itemL);
 
@@ -97,6 +100,16 @@ public class CartControllerTest {
         Item foundH = foundCart.getItems().get(0);
         assertEquals(foundH.getName(), "Hammer");
         assertEquals(foundH.getId().toString(), "1");
+
+        ModifyCartRequest reqRem = new ModifyCartRequest();
+        reqRem.setItemId(1l);
+        savedCart.removeItem(hammer);
+        cartController.removeFromcart(req);
+        when(cartRepository.save(savedCart)).thenReturn(savedCart);
+        Cart empty = cartRepository.save(savedCart);
+
+        List<Item> emptyL = new ArrayList<>();
+        assertEquals(empty.getItems(), emptyL);
     }
 
 
