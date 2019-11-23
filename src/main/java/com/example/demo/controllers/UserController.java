@@ -5,6 +5,9 @@ import java.util.List;
 import java.util.Optional;
 
 import com.example.demo.security.JwtTokenProvider;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +28,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 @RestController
 @RequestMapping("/api/user")
 public class UserController {
+
+	private static final Logger log = LoggerFactory.getLogger("com.ecommerce");
 
 	private UserRepository userRepository;
 
@@ -64,6 +69,7 @@ public class UserController {
 		userRepository.save(user);
 		List<String> roles = new ArrayList<String>();
 		roles.add("ROLE_CLIENT");
+		log.info("Creating this new user: " + user.getUsername());
 		return jwtTokenProvider.createToken(user.getUsername(),roles);
 		//return ResponseEntity.ok(user);
 	}
