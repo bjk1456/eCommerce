@@ -25,6 +25,8 @@ import com.example.demo.model.persistence.repositories.UserRepository;
 import com.example.demo.model.requests.CreateUserRequest;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import javax.validation.ConstraintViolationException;
+
 @RestController
 @RequestMapping("/api/user")
 public class UserController {
@@ -56,7 +58,7 @@ public class UserController {
 	}
 	
 	@PostMapping("/create")
-	public String createUser(@RequestBody CreateUserRequest createUserRequest) {
+	public String createUser(@RequestBody CreateUserRequest createUserRequest){
 		User user = new User();
 		user.setUsername(createUserRequest.getUsername());
 		System.out.println("The username is " + createUserRequest.getUsername());
@@ -66,12 +68,16 @@ public class UserController {
 		Cart cart = new Cart();
 		cartRepository.save(cart);
 		user.setCart(cart);
-		userRepository.save(user);
+		try {
+			userRepository.save(user);
+		}catch (Exception e) {
+			log.error("Failed to create a user for " + user.getUsername());
+			e.printStackTrace();
+		}
 		List<String> roles = new ArrayList<String>();
 		roles.add("ROLE_CLIENT");
-		log.info("Creating this new user: " + user.getUsername());
+		log.info("Just created this new user: " + user.getUsername());
 		return jwtTokenProvider.createToken(user.getUsername(),roles);
-		//return ResponseEntity.ok(user);
 	}
 
 

@@ -70,7 +70,6 @@ public class JwtTokenProvider {
 
     public String getUsername(String token) {
         String userName = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject();
-        System.out.println("Inside of getUserName ... and it is: " + userName);
         return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject();
     }
 

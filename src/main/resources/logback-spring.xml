@@ -36,9 +36,10 @@
     <root level="info">
         <appender-ref ref="Console" />
     </root>
-    
-    <logger name="com.ecommerce" level="info" additivity="false">
+
+    <logger name="com.ecommerce" level="info error" additivity="false">
         <appender-ref ref="RollingFile" />
     </logger>
+
 
 </configuration>

@@ -6,6 +6,7 @@ import com.example.demo.model.persistence.repositories.CartRepository;
 import com.example.demo.model.persistence.repositories.UserRepository;
 import com.example.demo.model.requests.CreateUserRequest;
 import com.example.demo.security.JwtTokenProvider;
+import com.example.demo.security.MyUserDetails;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,6 +14,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.ArrayList;
@@ -82,6 +84,21 @@ public class UserControllerTest {
         assertEquals("Bill", foundUser.getBody().getUsername());
     }
 
-
+    @Test
+    public void createUserTokenSuccessfully() throws Exception{
+        User user = new User();
+        user.setUsername("Bill");
+        user.setPassword("VerySecret");
+        user.setId(0);
+        userRepository.save(user);
+        List<String> roles = new ArrayList<String>();
+        roles.add("ROLE_CLIENT");
+        JwtTokenProvider tokenProvider = new JwtTokenProvider();
+        String token = tokenProvider.createToken(user.getUsername(),roles);
+        System.out.println("The token is " + token);
+        assertEquals(token.split("\\.")[0], "eyJhbGciOiJIUzI1NiJ9");
+        assertEquals(tokenProvider.validateToken(token), true);
+        assertEquals("Bill",tokenProvider.getUsername(token));
+    }
 
 }
