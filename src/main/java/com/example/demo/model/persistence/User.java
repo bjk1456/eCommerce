@@ -35,6 +35,9 @@ public class User {
 
 	@Size(min = 8, message = "Minimum password length: 8 characters")
 	private String password;
+
+	@Size(min = 8, message = "Minimum password length: 8 characters")
+	private String confPassword;
 	
 	public Cart getCart() {
 		return cart;
@@ -66,6 +69,14 @@ public class User {
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+
+	public String getConfirmPassword() {
+		return confPassword;
+	}
+
+	public void setConfirmPassword(String confPassword) {
+		this.confPassword = confPassword;
 	}
 	
 	

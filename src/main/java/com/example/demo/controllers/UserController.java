@@ -58,10 +58,13 @@ public class UserController {
 	}
 	
 	@PostMapping("/create")
-	public String createUser(@RequestBody CreateUserRequest createUserRequest){
+	public ResponseEntity<String> createUser(@RequestBody CreateUserRequest createUserRequest){
 		User user = new User();
 		user.setUsername(createUserRequest.getUsername());
-		System.out.println("The username is " + createUserRequest.getUsername());
+		if (createUserRequest.getPassword().length() < 7 || createUserRequest.getPassword() == null
+				|| !createUserRequest.getPassword().equals(createUserRequest.getConfirmPassword())) {
+			return ResponseEntity.badRequest().build();
+		}
 		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 		String hashedPassword = passwordEncoder.encode(createUserRequest.getPassword());
 		user.setPassword(hashedPassword);
@@ -77,7 +80,7 @@ public class UserController {
 		List<String> roles = new ArrayList<String>();
 		roles.add("ROLE_CLIENT");
 		log.info("Just created this new user: " + user.getUsername());
-		return jwtTokenProvider.createToken(user.getUsername(),roles);
+		return ResponseEntity.ok(jwtTokenProvider.createToken(user.getUsername(),roles));
 	}
 
 
